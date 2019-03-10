@@ -13,8 +13,31 @@
 
 USING_NS_CC;
 
+class A {
+private:
+	int j;
+public:
+	A()
+	{
+		j = 1;
+	}
+	int f2(int i, int k)
+	{
+		CCLOG("A::f is called, i = %d, j=%d, k=%d", i,j, k);
+		return i+k;
+	}
+	static int f3(int i, int k)
+	{
+		return i - k;
+	}
+};
+std::function<int(int, int)> callback2;
+std::function<int(int, int)> callback3;
 AppDelegate::AppDelegate() {
-
+	A a;
+	callback2 = std::bind(&A::f2, &a, std::placeholders::_1, std::placeholders::_2);
+	callback3 = A::f3;
+	
 }
 
 AppDelegate::~AppDelegate() 
@@ -28,6 +51,13 @@ AppDelegate::~AppDelegate()
 //it will takes effect on all platforms
 void AppDelegate::initGLContextAttrs()
 {
+	int r = callback2(2, 3);
+
+	CCLOG("r=%d", r);
+
+	r = 0;
+
+	r = callback3(2, 3);
     //set OpenGL context attributions,now can only set six attributions:
     //red,green,blue,alpha,depth,stencil
     GLContextAttrs glContextAttrs = {8, 8, 8, 8, 24, 8};
